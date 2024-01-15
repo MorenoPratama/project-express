@@ -158,3 +158,5 @@ const lpBola = (request: Request, response: Response) => {
     })
   }
 }
+
+export { volumeTabung, lpTabung, volumeKubus, lpKubus, volumeBalok, lpBalok, volumeBola, lpBola }
