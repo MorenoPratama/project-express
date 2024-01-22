@@ -8,6 +8,7 @@ import { request } from "http"
 import { validateCube } from "./middleware/validateCube"
 import routeBangunDatar from "./route/bangunDatar"
 import routeBangunRuang from "./route/bangunRuang"
+import routeEvent from "./route/eventRoute"
 
 /** buat wadah untuk inisiasi express */
 const app = express()
@@ -101,7 +102,11 @@ app.post(`/balok`, validateCube, (request: Request, response: Response) => {
 
 /** register route of bangun datar */
 app.use(routeBangunDatar)
+/** register route of bangun ruang */
 app.use(routeBangunRuang)
+
+/** register route of event */
+app.use(routeEvent)
 
 /** run server */
 app.listen(PORT, () => {

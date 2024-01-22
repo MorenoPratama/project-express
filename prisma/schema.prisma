@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root@localhost:3306/concert"
+  // root -> username dari database
+  // localhost -> nama server
+  // 3306 -> port database
+  // concert -> nama database
+}
+
+model Events {
+  eventID   Int       @id @default(autoincrement())
+  eventName String    @default("")
+  eventDate DateTime  @default(now())
+  venue     String    @default("")
+  price     Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Seats     Seats[]
+  Tickets   Tickets[]
+}
+
+model Seats {
+  seatID       Int       @id @default(autoincrement())
+  eventID      Int       @default(0)
+  rowNum       String    @default("")
+  seatNum      String    @default("")
+  status       Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  event_detail Events    @relation(fields: [eventID], references: [eventID])
+  Tickets      Tickets[]
+}
+
+model Users {
+  userID    Int       @id @default(autoincrement())
+  firstname String    @default("")
+  lastname  String    @default("")
+  email     String    @default("")
+  password  String    @default("")
+  role      ROLE      @default(user)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Tickets   Tickets[]
+}
+
+enum ROLE {
+  user
+  admin
+}
+
+model Tickets {
+  ticketID     Int      @id @default(autoincrement())
+  eventID      Int      @default(0)
+  userID       Int      @default(0)
+  seatID       Int      @default(0)
+  bookedDate   DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  event_detail Events   @relation(fields: [eventID], references: [eventID])
+  seats_detail Seats    @relation(fields: [seatID], references: [seatID])
+  users_detail Users    @relation(fields: [userID], references: [userID])
+}
