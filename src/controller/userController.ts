@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client"
 import { Request, Response } from "express"
-import { findSourceMap } from "module"
 
 /** create an object of Prisma */
 const prisma = new PrismaClient()
@@ -14,6 +13,7 @@ const createUsers = async (request: Request, response: Response) => {
         const lastname = request.body.lastname
         const email = request.body.email
         const password = request.body.password
+        const role = request.body.role
         
         /** insert to users table using prisma */
         const newData = await prisma.users.create({
@@ -21,7 +21,8 @@ const createUsers = async (request: Request, response: Response) => {
                 firstname: firstname,
                 lastname: lastname,
                 email: email,
-                password: password
+                password: password,
+                role: role
             }
         })
 
@@ -41,6 +42,10 @@ const createUsers = async (request: Request, response: Response) => {
 /** create fuction to READ Users */
 const readUsers = async ( request: Request, response: Response) => {
     try {
+        const page = Number(request.query.page) || 1;
+        const qty = Number(request.query.qty) || 5;
+        const keyword = request.query.keyword?.toString() || "";
+
         const dataUsers = await prisma.users.findMany()
         return response.status(200).json({
             status :true ,
@@ -65,6 +70,7 @@ const updateUser= async (request: Request, response: Response) => {
         const lastname = request.body.lastname
         const email = request.body.email
         const password = request.body.password
+        const role = request.body.role
 
         /** make sure that the data exists */
         const findUser = await prisma.users.findFirst({ where: { userID: userID } })
@@ -81,7 +87,8 @@ const updateUser= async (request: Request, response: Response) => {
                 firstname: firstname || findUser.firstname,
                 lastname: lastname || findUser.lastname,
                 email: email || findUser.lastname,
-                password: password || findUser.password
+                password: password || findUser.password,
+                role: role || findUser.role
             }
         })
 

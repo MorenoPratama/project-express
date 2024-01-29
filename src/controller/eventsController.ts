@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client"
 import { Request, Response } from "express"
-import { request } from "http"
 
 /** create an object of Prisma */
 const prisma = new PrismaClient()
@@ -41,7 +40,21 @@ const createEvents = async (request: Request, response: Response) => {
 /** create fuction to READ events */
 const readEvents = async (request: Request, response: Response) => {
     try {
-        const dataEvent = await prisma.events.findMany()
+        const page = Number(request.query.page) || 1;
+        const qty = Number(request.query.qty) || 5;
+        const keyword = request.query.keyword?.toString() || "";
+
+        const dataEvent = await prisma.events.findMany({
+            take: qty, // mendefisinikan jmlh data yang diambil
+            skip: (page - 1) * qty,
+            where: {
+                OR: [
+                    {eventName: {contains: keyword } },
+                    {venue: {contains: keyword } }
+                ]
+            },
+            orderBy: { eventName: "asc" }
+        })
         return response.status(200).json({
             status: true,
             message: `Events has been loaded`,

@@ -12,13 +12,15 @@ const createSeats = async (request: Request, response: Response) => {
         const eventID = Number(request.body.eventID)
         const rowNum = request.body.rowNum
         const seatNum = request.body.seatNum
+        const status: boolean = request.body.status
         
         /** insert to seats table using prisma */
         const newData = await prisma.seats.create({
             data: {
                 eventID: eventID,
                 rowNum: rowNum,
-                seatNum: seatNum
+                seatNum: seatNum,
+                status: status
             }
         })
 
@@ -38,6 +40,10 @@ const createSeats = async (request: Request, response: Response) => {
 /** create fuction to READ seats */
 const readSeats = async ( request: Request, response: Response) => {
     try {
+        const page = Number(request.query.page) || 1;
+        const qty = Number(request.query.qty) || 5;
+        const keyword = request.query.keyword?.toString() || "";
+        
         const dataSeats = await prisma.seats.findMany()
         return response.status(200).json({
             status :true ,
@@ -60,6 +66,7 @@ const updateSeat= async (request: Request, response: Response) => {
         const eventID = Number(request.body.eventID)
         const rowNum = request.body.rowNum
         const seatNum = request.body.seatNum
+        const status: boolean = request.body.status
 
         /** make sure that the data exists */
         const findSeat = await prisma.seats.findFirst({ where: { seatID: seatID } })
@@ -75,7 +82,8 @@ const updateSeat= async (request: Request, response: Response) => {
             data: {
                 eventID: eventID || findSeat.eventID,
                 rowNum: rowNum || findSeat.rowNum,
-                seatNum: seatNum || findSeat.seatNum
+                seatNum: seatNum || findSeat.seatNum,
+                status: status || findSeat.status
             }
         })
 

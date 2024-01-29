@@ -9,6 +9,8 @@ const app = express()
 /** allow to read a json from body */
 app.use(express.json())
 
+
+
 /** address for get event data */
 app.get(`/event`, readEvents)
 /** address for add new event */
@@ -18,6 +20,7 @@ app.post(`/event`, createEvents)
 app.put(`/event/:eventID`, updateEvent)
 /** address for delete event */
 app.delete(`/event/:eventID`, deleteEvents)
+
 
 
 /** address for get seat data */
@@ -31,6 +34,7 @@ app.put(`/seat/:seatID`, updateSeat)
 app.delete(`/seat/:seatID`, deleteSeats)
 
 
+
 /** address for get user data */
 app.get(`/user`, readUsers)
 /** address for add new user */
@@ -40,6 +44,7 @@ app.post(`/user`, createUsers)
 app.put(`/user/:userID`, updateUser)
 /** address for delete user */
 app.delete(`/user/:userID`, deleteUsers)
+
 
 
 /** address for get ticket data */

@@ -40,6 +40,10 @@ const createTickets = async (request: Request, response: Response) => {
 /** create fuction to READ tickets */
 const readTickets = async ( request: Request, response: Response) => {
     try {
+        const page = Number(request.query.page) || 1;
+        const qty = Number(request.query.qty) || 5;
+        const keyword = request.query.keyword?.toString() || "";
+        
         const dataTickets = await prisma.tickets.findMany()
         return response.status(200).json({
             status :true ,
