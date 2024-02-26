@@ -1,5 +1,7 @@
-import { PrismaClient } from "@prisma/client"
-import { Request, Response } from "express"
+import { PrismaClient } from "@prisma/client";
+import { Request, Response } from "express";
+import md5 from "md5";
+import { sign } from "jsonwebtoken";
 
 /** create an object of Prisma */
 const prisma = new PrismaClient()
@@ -12,7 +14,7 @@ const createUsers = async (request: Request, response: Response) => {
         const firstname = request.body.firstname
         const lastname = request.body.lastname
         const email = request.body.email
-        const password = request.body.password
+        const password = md5(request.body.password)
         const role = request.body.role
         
         /** insert to users table using prisma */
@@ -69,7 +71,7 @@ const updateUser= async (request: Request, response: Response) => {
         const firstname = request.body.firstname
         const lastname = request.body.lastname
         const email = request.body.email
-        const password = request.body.password
+        const password = md5(request.body.password)
         const role = request.body.role
 
         /** make sure that the data exists */
@@ -136,4 +138,35 @@ const deleteUsers = async (request: Request, response: Response) => {
     }
 }
 
-export { createUsers, readUsers, updateUser, deleteUsers }
+
+const Login = async (request: Request, response: Response) => {
+    try {
+        const email = request.body.email
+        const password = md5(request.body.password)
+        const user = await prisma.users.findFirst({where: {email: email, password: password}})
+
+        if (user) {
+            const payload = user
+            const secretkey = 'awoop'
+            const token = sign(payload, secretkey)
+            return response.status(200).json({
+                status :true,
+                message:"Login Success",
+                token: token
+            })
+        }
+        else {
+            return  response.status(200).json({
+                status: false,
+                message:"Login Failed"
+            })
+        }
+
+    } catch (error) {
+        return response.status(500).json({
+            status: false,
+            message: error
+        })
+    }
+}
+export { createUsers, readUsers, updateUser, deleteUsers, Login }

@@ -44,7 +44,16 @@ const readSeats = async ( request: Request, response: Response) => {
         const qty = Number(request.query.qty) || 5;
         const keyword = request.query.keyword?.toString() || "";
         
-        const dataSeats = await prisma.seats.findMany()
+        const dataSeats = await prisma.seats.findMany({
+            take: qty,
+            skip: (page - 1) * qty,
+            where: {
+                OR: [
+                    { rowNum: { contains: keyword } },
+                    { seatNum: { contains: keyword } }
+                ]
+            }
+        })
         return response.status(200).json({
             status :true ,
             message: `Seats has been loaded`,
